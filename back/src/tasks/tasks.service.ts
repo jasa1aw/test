@@ -1,10 +1,14 @@
 import { Injectable, NotFoundException, ForbiddenException } from '@nestjs/common'
 import { PrismaService } from '../prisma/prisma.service'
 import { CreateTaskDto, UpdateTaskDto } from '../dto/tasks.dto'
+import { TasksGateway } from './tasks.gateway'
 
 @Injectable()
 export class TasksService {
-	constructor(private readonly prisma: PrismaService) { }
+	constructor(
+		private readonly prisma: PrismaService,
+		private readonly gateway: TasksGateway,
+	) { }
 
 	findAll(userId: string) {
 		return this.prisma.task.findMany({
@@ -21,10 +25,21 @@ export class TasksService {
 
 	async update(userId: string, id: string, dto: UpdateTaskDto) {
 		await this.ensureOwner(userId, id)
-		return this.prisma.task.update({
+
+		const task = await this.prisma.task.update({
 			where: { id },
 			data: dto,
 		})
+
+		if (dto.status !== undefined) {
+			this.gateway.emitTaskStatusChanged({
+				taskId: task.id,
+				status: task.status,
+				timestamp: new Date().toISOString(),
+			})
+		}
+
+		return task
 	}
 
 	async remove(userId: string, id: string) {
