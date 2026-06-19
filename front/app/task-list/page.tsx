@@ -5,7 +5,7 @@ import { cookies } from "next/headers"
 
 export default async function TaskListPage() {
   const cookieStore = await cookies()
-  const token = cookieStore.get("accessToken")?.value
+  const token = cookieStore.get("token")?.value
   let email: string | null = null
   if (token) {
     try {

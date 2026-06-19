@@ -18,35 +18,29 @@ export async function login(_prev: AuthState, formData: FormData): Promise<AuthS
     return { error: "Заполните все поля" }
   }
 
-  let res: Response
-  try {
-    res = await fetch(`${API_URL}/auth/login`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-  } catch {
-    return { error: "Не удалось подключиться к серверу" }
-  }
+  const res = await fetch(`${API_URL}/auth/login`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  })
 
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}))
-    return { error: data?.message ?? "Неверный email или пароль" }
+    return { error: "Неверный email или пароль" }
   }
 
-  const data = await res.json()
-  const token: string | undefined =
-    data?.access_token ?? data?.accessToken ?? data?.token
-
-  if (token) {
-    const cookieStore = await cookies()
-    cookieStore.set("accessToken", token, {
-      httpOnly: true,
-      secure: process.env.NODE_ENV === "production",
-      sameSite: "lax",
-      path: "/",
-      maxAge: 60 * 60 * 24 * 7,
-    })
+  const setCookie = res.headers.get("set-cookie")
+  if (setCookie) {
+    const match = setCookie.match(/token=([^;]+)/)
+    if (match) {
+      const cookieStore = await cookies()
+      cookieStore.set("token", match[1], {
+        httpOnly: true,
+        secure: process.env.NODE_ENV === "production",
+        sameSite: "lax",
+        path: "/",
+        maxAge: 60 * 60 * 24 * 7,
+      })
+    }
   }
 
   redirect("/task-list")
@@ -69,20 +63,14 @@ export async function register(_prev: AuthState, formData: FormData): Promise<Au
     return { error: "Пароли не совпадают" }
   }
 
-  let res: Response
-  try {
-    res = await fetch(`${API_URL}/auth/register`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ email, password }),
-    })
-  } catch {
-    return { error: "Не удалось подключиться к серверу" }
-  }
+  const res = await fetch(`${API_URL}/auth/register`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ email, password }),
+  })
 
   if (!res.ok) {
-    const data = await res.json().catch(() => ({}))
-    return { error: data?.message ?? "Ошибка регистрации" }
+    return { error: "Ошибка регистрации" }
   }
 
   return { success: true }
@@ -90,15 +78,15 @@ export async function register(_prev: AuthState, formData: FormData): Promise<Au
 
 export async function logout(): Promise<void> {
   const cookieStore = await cookies()
-  const token = cookieStore.get("accessToken")?.value
+  const token = cookieStore.get("token")?.value
 
   if (token) {
     await fetch(`${API_URL}/auth/logout`, {
       method: "POST",
-      headers: { Authorization: `Bearer ${token}` },
-    }).catch(() => {})
+      headers: { Cookie: `token=${token}` },
+    })
 
-    cookieStore.delete("accessToken")
+    cookieStore.delete("token")
   }
 
   redirect("/auth")

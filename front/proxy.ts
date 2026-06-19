@@ -4,9 +4,9 @@ import type { NextRequest } from 'next/server'
 const PUBLIC_PATHS = ['/auth']
 const PROTECTED_PATHS = ['/task-list']
 
-export function middleware(request: NextRequest) {
+export function proxy(request: NextRequest) {
 	const { pathname } = request.nextUrl
-	const token = request.cookies.get('accessToken')?.value
+	const token = request.cookies.get('token')?.value
 
 	const isProtected = PROTECTED_PATHS.some((p) => pathname.startsWith(p))
 	const isPublic = PUBLIC_PATHS.some((p) => pathname.startsWith(p))

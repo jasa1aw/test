@@ -158,11 +158,15 @@ export function TaskModal({
             <Select
               value={status}
               onValueChange={(val) => {
-                if (val) setStatus(val)
+                if (val) setStatus(val as "todo" | "progress" | "done")
               }}
             >
               <SelectTrigger className="h-9 w-full bg-[#f9fafb] border-[#e5e7eb] rounded-lg text-sm text-[#111111] focus-visible:ring-1 focus-visible:ring-[#6366f1] focus-visible:border-[#6366f1] outline-none">
-                <SelectValue placeholder="Выберите статус" />
+                <SelectValue>
+                  {status === "todo" && "К выполнению"}
+                  {status === "progress" && "В процессе"}
+                  {status === "done" && "Выполнено"}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent className="bg-white border border-[#e5e7eb] rounded-lg shadow-md">
                 <SelectItem value="todo" className="text-sm text-[#111111] hover:bg-[#f9fafb] cursor-pointer">
