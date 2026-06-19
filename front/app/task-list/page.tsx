@@ -12,7 +12,7 @@ export default function TaskListPage() {
         
         <nav className="flex-1 p-2 space-y-0.5">
           <a
-            className="flex items-center gap-[9px] px-2.5 py-2 rounded-lg text-xm font-medium transition-all text-[#6366f1] border-l-2 border-[#6366f1] bg-[#6366f1]/0.06"
+            className="flex items-center gap-2.5 px-2.5 py-2 rounded-lg text-xm font-medium transition-all text-[#6366f1] border-l-2 border-[#6366f1] bg-[#6366f1]/0.06"
             href="#"
           >
             <LayoutGrid className="size-4" />
@@ -46,23 +46,7 @@ export default function TaskListPage() {
       </aside>
 
       <main className="flex-1 flex flex-col overflow-hidden min-w-0">
-        <div className="px-8 pt-5 pb-5 border-b border-[#e5e7eb] shrink-0">
-          <div className="flex items-center justify-between">
-            <h1 className="text-xl font-bold text-[#111111] tracking-tight leading-none">
-              Мои задачи
-            </h1>
-            <Button
-              className="flex items-center gap-1.5 px-3.5 py-2 bg-[#6366f1] hover:bg-[#4f46e5] text-white rounded-lg text-sm font-semibold cursor-pointer h-9"
-            >
-              <Plus className="size-4" />
-              Новая задача
-            </Button>
-          </div>
-        </div>
-
-        <div className="flex-1 overflow-auto px-8 py-6">
-          <TaskStatusFilter />
-        </div>
+        <TaskStatusFilter />
       </main>
     </div>
   )
