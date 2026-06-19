@@ -73,7 +73,16 @@ export function RegisterForm({ onSwitch }: RegisterFormProps) {
 
       {state.success && (
         <Alert className="mb-3 border-green-500/30 bg-green-500/10 text-green-700 dark:text-green-400">
-          <AlertDescription>Аккаунт создан! Добро пожаловать.</AlertDescription>
+          <AlertDescription>
+            Аккаунт создан!{" "}
+            <button
+              type="button"
+              onClick={onSwitch}
+              className="underline font-medium"
+            >
+              Войдите
+            </button>
+          </AlertDescription>
         </Alert>
       )}
 

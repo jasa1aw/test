@@ -1,6 +1,6 @@
-import { redirect } from "next/navigation" // Added
+import { redirect } from "next/navigation"
 
 export default function Home() {
-  redirect("/task-list");
+  redirect("/task-list")
 }
 
